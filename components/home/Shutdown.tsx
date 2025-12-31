@@ -14,7 +14,6 @@ import {
   Instagram,
   MessageCircle,
   Globe,
-  Terminal,
   Cpu,
   Send,
   Phone,
@@ -67,6 +66,13 @@ const getPlatformStyle = (platform: string) => {
       bg: "hover:bg-emerald-500/10",
       icon: <Phone size={24} />,
     };
+  if (p.includes("website") || p.includes("portfolio"))
+    return {
+      color: "text-purple-500",
+      border: "hover:border-purple-500/50",
+      bg: "hover:bg-purple-500/10",
+      icon: <Globe size={24} />,
+    };
   return {
     color: "text-indigo-500",
     border: "hover:border-indigo-500/50",
@@ -79,14 +85,13 @@ export default function Contact({ contacts = [] }: { contacts: any[] }) {
   const container = useRef(null);
   const [copied, setCopied] = useState(false);
 
-  const emailContact = contacts?.find(
-    (c) =>
-      c.platform.toLowerCase().includes("email") ||
-      c.platform.toLowerCase().includes("gmail")
+  //  DATA EXTRACTION
+  const emailContact = contacts?.find((c) =>
+    ["email", "gmail"].some((k) => c.platform.toLowerCase().includes(k))
   );
   const emailAddress = emailContact
     ? emailContact.link.replace("mailto:", "")
-    : "hello@aadiqureshi89@gmail.com"; // Default fallback
+    : "hello@aadiqureshi89@gmail.com";
 
   const linkedIn = contacts?.find((c) =>
     c.platform.toLowerCase().includes("linkedin")
@@ -95,13 +100,37 @@ export default function Contact({ contacts = [] }: { contacts: any[] }) {
     c.platform.toLowerCase().includes("github")
   );
 
-  const otherSocials =
-    contacts?.filter(
-      (c) =>
-        !["linkedin", "github", "email", "gmail"].some((k) =>
-          c.platform.toLowerCase().includes(k)
-        )
-    ) || [];
+  // Secondary Socials List
+  const socialList = [
+    contacts?.find((c) =>
+      ["twitter", "x"].some((k) => c.platform.toLowerCase().includes(k))
+    ),
+    contacts?.find((c) =>
+      ["website", "portfolio"].some((k) => c.platform.toLowerCase().includes(k))
+    ),
+    contacts?.find((c) => c.platform.toLowerCase().includes("instagram")),
+    contacts?.find((c) => c.platform.toLowerCase().includes("whatsapp")),
+  ].filter(Boolean); // Remove undefined/null
+
+  // Fallback for "Other" generic types not caught above
+  const others = contacts?.filter(
+    (c) =>
+      ![
+        "linkedin",
+        "github",
+        "email",
+        "gmail",
+        "twitter",
+        "x",
+        "website",
+        "portfolio",
+        "instagram",
+        "whatsapp",
+      ].some((k) => c.platform.toLowerCase().includes(k))
+  );
+
+  // Combine for the grid
+  const gridItems = [...socialList, ...(others || [])];
 
   const handleCopy = () => {
     navigator.clipboard.writeText(emailAddress);
@@ -111,9 +140,7 @@ export default function Contact({ contacts = [] }: { contacts: any[] }) {
 
   useGSAP(
     () => {
-      // Refresh ScrollTrigger to ensure accurate start positions
       ScrollTrigger.refresh();
-
       const tl = gsap.timeline({
         scrollTrigger: {
           trigger: container.current,
@@ -142,7 +169,6 @@ export default function Contact({ contacts = [] }: { contacts: any[] }) {
         "-=0.4"
       );
     },
-    //  CRITICAL FIX: Ensure animation runs when 'contacts' data loads
     { scope: container, dependencies: [contacts] }
   );
 
@@ -151,14 +177,11 @@ export default function Contact({ contacts = [] }: { contacts: any[] }) {
       ref={container}
       className="relative py-24 px-4 md:px-8 bg-[#050505] border-t border-white/5 overflow-hidden"
     >
-      {/* Background Noise Texture */}
       <div className="absolute inset-0 opacity-[0.03] bg-[url('https://grainy-gradients.vercel.app/noise.svg')] pointer-events-none" />
-
-      {/* Background Glow */}
       <div className="absolute bottom-0 right-0 w-125 h-125 bg-indigo-600/5 blur-[120px] rounded-full pointer-events-none" />
 
       <div className="max-w-7xl mx-auto w-full relative z-10">
-        {/*  HEADER */}
+        {/* HEADER */}
         <div className="shutdown-header flex flex-col md:flex-row justify-between items-end mb-16 border-b border-white/5 pb-8">
           <div>
             <div className="flex items-center gap-2 text-emerald-500 mb-3 font-mono text-[10px] uppercase tracking-widest">
@@ -188,12 +211,12 @@ export default function Contact({ contacts = [] }: { contacts: any[] }) {
           </div>
         </div>
 
-        {/*  BENTO GRID LAYOUT */}
-        <div className="grid grid-cols-1 md:grid-cols-4 md:grid-rows-2 gap-4 h-auto">
-          {/* EMAIL COMMAND (Large Square)  */}
-          <div className="bento-item col-span-1 md:col-span-2 md:row-span-2 relative bg-[#0e0e10] border border-white/10 rounded-3xl p-8 flex flex-col justify-between overflow-hidden group hover:border-white/20 transition-all duration-500 min-h-100">
+        {/* BENTO GRID LAYOUT */}
+        {/* Refactored to 2 main columns: Left (Email) and Right (Stack of Socials) */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 h-auto">
+          {/* LEFT COLUMN: EMAIL (Stretches to fill height) */}
+          <div className="bento-item relative bg-[#0e0e10] border border-white/10 rounded-3xl p-8 flex flex-col justify-between overflow-hidden group hover:border-white/20 transition-all duration-500 min-h-400px h-full">
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,var(--tw-gradient-stops))] from-indigo-500/10 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-
             <div>
               <div className="w-14 h-14 bg-white/5 rounded-2xl flex items-center justify-center mb-6 border border-white/5 text-white group-hover:scale-110 group-hover:bg-indigo-500 group-hover:border-indigo-400 transition-all duration-300 shadow-xl">
                 <Mail size={28} />
@@ -206,7 +229,6 @@ export default function Contact({ contacts = [] }: { contacts: any[] }) {
                 for freelance work and full-time opportunities.
               </p>
             </div>
-
             <div className="space-y-3 relative z-10 mt-8">
               <div className="flex items-center gap-2 p-1 bg-black/40 border border-white/10 rounded-xl pl-4 pr-1">
                 <span className="font-mono text-zinc-300 text-xs md:text-sm truncate flex-1">
@@ -237,100 +259,87 @@ export default function Contact({ contacts = [] }: { contacts: any[] }) {
             </div>
           </div>
 
-          {/* SLOT 2 & 3: PRIMARY SOCIALS  */}
-          <div className="col-span-1 md:col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {/* LinkedIn */}
-            <a
-              href={linkedIn?.link || "#"}
-              target="_blank"
-              className={`bento-item bg-[#0e0e10] border border-white/10 rounded-3xl p-6 flex flex-col justify-between group transition-all duration-300 ${
-                getPlatformStyle("linkedin").border
-              } ${getPlatformStyle("linkedin").bg}`}
-            >
-              <div className="flex justify-between items-start">
-                <div
-                  className={`p-3 rounded-xl bg-white/5 ${
-                    getPlatformStyle("linkedin").color
-                  }`}
-                >
-                  <Linkedin size={24} />
-                </div>
-                <ArrowUpRight className="text-zinc-600 group-hover:text-white transition-colors" />
-              </div>
-              <div className="mt-8">
-                <h4 className="text-white font-bold text-lg">LinkedIn</h4>
-                <p className="text-zinc-500 text-xs">Professional Network</p>
-              </div>
-            </a>
-
-            {/* GitHub */}
-            <a
-              href={github?.link || "#"}
-              target="_blank"
-              className={`bento-item bg-[#0e0e10] border border-white/10 rounded-3xl p-6 flex flex-col justify-between group transition-all duration-300 ${
-                getPlatformStyle("github").border
-              } ${getPlatformStyle("github").bg}`}
-            >
-              <div className="flex justify-between items-start">
-                <div
-                  className={`p-3 rounded-xl bg-white/5 ${
-                    getPlatformStyle("github").color
-                  }`}
-                >
-                  <Github size={24} />
-                </div>
-                <ArrowUpRight className="text-zinc-600 group-hover:text-white transition-colors" />
-              </div>
-              <div className="mt-8">
-                <h4 className="text-white font-bold text-lg">GitHub</h4>
-                <p className="text-zinc-500 text-xs">Code Repository</p>
-              </div>
-            </a>
-          </div>
-
-          {/* SLOT 4: DYNAMIC SOCIAL STACK  */}
-          <div className="col-span-1 md:col-span-2 grid grid-cols-3 gap-4">
-            {otherSocials.slice(0, 3).map((contact, i) => {
-              const style = getPlatformStyle(contact.platform);
-              return (
-                <a
-                  key={contact._id || i}
-                  href={contact.link}
-                  target="_blank"
-                  className={`bento-item bg-[#0e0e10] border border-white/10 rounded-3xl flex flex-col items-center justify-center gap-3 group transition-all duration-300 ${style.border} ${style.bg} min-h-35`}
-                >
-                  <div
-                    className={`${style.color} opacity-70 group-hover:opacity-100 group-hover:scale-110 transition-all`}
-                  >
-                    {style.icon}
-                  </div>
-                  <span className="text-[10px] font-bold text-zinc-500 uppercase group-hover:text-white tracking-wider">
-                    {contact.platform}
-                  </span>
-                </a>
-              );
-            })}
-
-            {/* Placeholder: If no extra socials, show Resume */}
-            {otherSocials.length < 3 && (
+          {/* RIGHT COLUMN: STACK OF SOCIALS */}
+          <div className="flex flex-col gap-4">
+            {/* Row 1: Primary (LinkedIn & GitHub) */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {/* LinkedIn */}
               <a
-                href="/resume.pdf"
+                href={linkedIn?.link || "#"}
                 target="_blank"
-                className="bento-item bg-[#0e0e10] border border-white/10 rounded-3xl flex flex-col items-center justify-center gap-3 group hover:border-orange-500/50 hover:bg-orange-500/10 transition-all duration-300 min-h-35"
+                className={`bento-item bg-[#0e0e10] border border-white/10 rounded-3xl p-6 flex flex-col justify-between group transition-all duration-300 ${
+                  getPlatformStyle("linkedin").border
+                } ${getPlatformStyle("linkedin").bg}`}
               >
-                <Terminal
-                  size={24}
-                  className="text-orange-500 opacity-70 group-hover:opacity-100 group-hover:scale-110 transition-transform"
-                />
-                <span className="text-[10px] font-bold text-zinc-500 uppercase group-hover:text-white tracking-wider">
-                  RESUME
-                </span>
+                <div className="flex justify-between items-start">
+                  <div
+                    className={`p-3 rounded-xl bg-white/5 ${
+                      getPlatformStyle("linkedin").color
+                    }`}
+                  >
+                    <Linkedin size={24} />
+                  </div>
+                  <ArrowUpRight className="text-zinc-600 group-hover:text-white transition-colors" />
+                </div>
+                <div className="mt-8">
+                  <h4 className="text-white font-bold text-lg">LinkedIn</h4>
+                  <p className="text-zinc-500 text-xs">Professional Network</p>
+                </div>
               </a>
-            )}
+
+              {/* GitHub */}
+              <a
+                href={github?.link || "#"}
+                target="_blank"
+                className={`bento-item bg-[#0e0e10] border border-white/10 rounded-3xl p-6 flex flex-col justify-between group transition-all duration-300 ${
+                  getPlatformStyle("github").border
+                } ${getPlatformStyle("github").bg}`}
+              >
+                <div className="flex justify-between items-start">
+                  <div
+                    className={`p-3 rounded-xl bg-white/5 ${
+                      getPlatformStyle("github").color
+                    }`}
+                  >
+                    <Github size={24} />
+                  </div>
+                  <ArrowUpRight className="text-zinc-600 group-hover:text-white transition-colors" />
+                </div>
+                <div className="mt-8">
+                  <h4 className="text-white font-bold text-lg">GitHub</h4>
+                  <p className="text-zinc-500 text-xs">Code Repository</p>
+                </div>
+              </a>
+            </div>
+
+            {/* Row 2: Secondary Grid (Twitter, Website, Insta, Whatsapp, Resume) */}
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 flex-1">
+              {/* Map through explicitly found items */}
+              {gridItems.map((contact, i) => {
+                const style = getPlatformStyle(contact.platform);
+                return (
+                  <a
+                    key={contact._id || i}
+                    href={contact.link}
+                    target="_blank"
+                    className={`bento-item bg-[#0e0e10] border border-white/10 rounded-3xl flex flex-col items-center justify-center gap-3 group transition-all duration-300 ${style.border} ${style.bg} min-h-35`}
+                  >
+                    <div
+                      className={`${style.color} opacity-70 group-hover:opacity-100 group-hover:scale-110 transition-all`}
+                    >
+                      {style.icon}
+                    </div>
+                    <span className="text-[10px] font-bold text-zinc-500 uppercase group-hover:text-white tracking-wider">
+                      {contact.platform}
+                    </span>
+                  </a>
+                );
+              })}
+            </div>
           </div>
         </div>
 
-        {/*  FOOTER */}
+        {/* FOOTER */}
         <div className="mt-16 pt-8 border-t border-white/5 flex flex-col md:flex-row justify-between items-center text-[10px] font-mono text-zinc-600 uppercase tracking-widest">
           <div className="flex items-center gap-2 mb-2 md:mb-0">
             <Power size={12} className="text-red-500" />
