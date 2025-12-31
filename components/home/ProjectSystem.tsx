@@ -89,7 +89,7 @@ export default function ProjectSystem({ projects }: { projects: any[] }) {
                 src={project.imageUrl}
                 alt={project.title}
                 fill
-                className="object-cover opacity-60 md:opacity-80 md:group-hover:opacity-40 md:group-hover:scale-105 transition-all duration-700 grayscale group-hover:grayscale-0"
+                className="object-cover opacity-100 md:opacity-80 md:group-hover:opacity-40 md:group-hover:scale-105 transition-all duration-700 md:grayscale md:group-hover:grayscale-0"
               />
               <div className="absolute inset-0 bg-linear-to-t from-[#0e0e10] via-[#0e0e10]/60 to-transparent" />
             </div>

@@ -20,10 +20,10 @@ export const viewport: Viewport = {
 
 // 2. METADATA CONFIGURATION
 export const metadata: Metadata = {
-  metadataBase: new URL("https://adnanqureshi.me"), // REPLACE with your actual domain
+  metadataBase: new URL("https://adnanos.vercel.app/"), 
 
   title: {
-    default: "Adnan Qureshi | System Architect & Full Stack Dev",
+    default: "Adnan Qureshi | Software Developer & Full Stack Developer",
     template: "%s | Adnan.OS",
   },
 
@@ -31,7 +31,7 @@ export const metadata: Metadata = {
     "Access the digital workspace of Adnan Qureshi. A high-performance portfolio showcasing expertise in MERN Stack, Next.js, System Architecture, and Competitive Programming.",
 
   applicationName: "Adnan.OS",
-  authors: [{ name: "Adnan Qureshi", url: "https://github.com/adnan-commit" }],
+  authors: [{ name: "Adnan Qureshi", url: "https://adnanos.vercel.app/" }],
   keywords: [
     "Adnan Qureshi",
     "Full Stack Developer",
@@ -52,7 +52,7 @@ export const metadata: Metadata = {
     title: "Adnan.OS // System Online",
     description:
       "Architecting scalable digital ecosystems. Explore the projects and execution history of Adnan Qureshi.",
-    url: "https://adnanqureshi.me",
+    url: "https://adnanos.vercel.app/",
     siteName: "Adnan Qureshi Portfolio",
     locale: "en_US",
     type: "website",

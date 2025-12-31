@@ -85,7 +85,10 @@ export default function Certifications({ certs }: { certs: any[] }) {
                 src={cert.imageUrl}
                 alt={cert.name}
                 fill
-                className="object-cover opacity-70 group-hover:opacity-100 group-hover:scale-105 transition-all duration-700 grayscale group-hover:grayscale-0"
+                className="object-cover transition-all duration-700
+                  opacity-100 grayscale-0
+                  md:opacity-70 md:grayscale
+                  md:group-hover:opacity-100 md:group-hover:scale-105 md:group-hover:grayscale-0"
               />
               <div className="absolute inset-0 bg-linear-to-t from-[#0e0e10] via-[#0e0e10]/20 to-transparent" />
 

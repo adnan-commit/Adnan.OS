@@ -1,20 +1,13 @@
 "use client";
-import { useState } from "react";
 import Image from "next/image";
 import { Trophy, ExternalLink, Calendar, Award } from "lucide-react";
-import { motion, AnimatePresence, Variants } from "framer-motion";
+import { motion, Variants } from "framer-motion";
 
 export default function Achievements({
   achievements,
 }: {
   achievements: any[];
 }) {
-  const [activeCardId, setActiveCardId] = useState<string | null>(null);
-
-  const handleCardClick = (id: string) => {
-    setActiveCardId((prev) => (prev === id ? null : id));
-  };
-
   const containerVariants = {
     hidden: { opacity: 0 },
     show: {
@@ -40,12 +33,10 @@ export default function Achievements({
   };
 
   return (
-    <section
-      onClick={() => setActiveCardId(null)}
-      className="py-16 md:py-24 px-4 md:px-12 max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-8 md:gap-12 border-t border-white/5 relative"
-    >
+    <section className="py-16 md:py-24 px-4 md:px-12 max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-8 md:gap-12 border-t border-white/5 relative">
       <div className="absolute inset-0 opacity-[0.02] bg-[url('https://grainy-gradients.vercel.app/noise.svg')] pointer-events-none" />
 
+      {/* Sticky Header */}
       <div className="col-span-1 lg:sticky lg:top-24 h-fit z-10 mb-8 lg:mb-0 pointer-events-none">
         <motion.div
           initial={{ opacity: 0, x: -20 }}
@@ -95,24 +86,14 @@ export default function Achievements({
           achievements.map((item) => {
             const imageSrc =
               item.imageUrl || item.image || "/placeholder-achievement.jpg";
-            const isActive = activeCardId === item._id;
 
             return (
               <motion.div
                 key={item._id}
                 variants={cardVariants}
-                whileHover={{ y: -5, scale: 1.02 }} // Lift effect on Desktop Hover
-                whileTap={{ scale: 0.98 }} // Press effect on Mobile Tap
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleCardClick(item._id);
-                }}
-                className={`achievement-card group relative h-70 md:h-80 rounded-2xl overflow-hidden bg-[#0e0e10] transition-colors duration-500 cursor-pointer
-                ${
-                  isActive
-                    ? "border-purple-500/60 shadow-[0_0_30px_rgba(168,85,247,0.2)]"
-                    : "border border-white/10 hover:border-purple-500/50 hover:shadow-[0_0_20px_rgba(168,85,247,0.1)]"
-                }`}
+                whileHover={{ y: -5, scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                className="achievement-card group relative h-70 md:h-80 rounded-2xl overflow-hidden bg-[#0e0e10] border border-white/10 hover:border-purple-500/50 hover:shadow-[0_0_20px_rgba(168,85,247,0.1)] transition-colors duration-500 cursor-default md:cursor-pointer"
               >
                 {/* Background Image */}
                 <div className="absolute inset-0 z-0">
@@ -120,33 +101,24 @@ export default function Achievements({
                     src={imageSrc}
                     alt={item.title}
                     fill
-                    className={`object-cover transition-all duration-700
-                    ${
-                      isActive
-                        ? "opacity-60 scale-105 grayscale-0"
-                        : "opacity-40 group-hover:opacity-60 group-hover:scale-105 grayscale group-hover:grayscale-0"
-                    }`}
+                    // MOBILE: Opacity 60%, No Grayscale, No Scale
+                    // DESKTOP: Opacity 40%, Grayscale -> Hover: Opacity 60%, Color, Scale
+                    className="object-cover transition-all duration-700
+                      opacity-60 grayscale-0 
+                      md:opacity-40 md:grayscale 
+                      md:group-hover:opacity-60 md:group-hover:grayscale-0 md:group-hover:scale-105"
                   />
                   <div className="absolute inset-0 bg-linear-to-t from-[#09090b] via-[#09090b]/60 to-transparent" />
 
-                  <div
-                    className={`absolute inset-0 bg-linear-to-tr from-purple-500/0 via-purple-500/10 to-transparent transition-opacity duration-500 ${
-                      isActive || "group-hover:opacity-100"
-                    } opacity-0`}
-                  />
+                  {/* Holographic Shine (Hidden on Mobile, Visible on Desktop Hover) */}
+                  <div className="absolute inset-0 bg-linear-to-tr from-purple-500/0 via-purple-500/10 to-transparent transition-opacity duration-500 opacity-0 md:group-hover:opacity-100" />
                 </div>
 
                 {/* Content */}
                 <div className="relative z-10 h-full flex flex-col justify-between p-5 md:p-6 pointer-events-none">
+                  {/* Top Row: Date & Icon */}
                   <div className="flex justify-between items-start">
-                    <div
-                      className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-black/50 backdrop-blur-md border text-[10px] md:text-xs font-mono text-zinc-300 transition-colors
-                     ${
-                       isActive
-                         ? "border-purple-500/30 text-white"
-                         : "border-white/10 group-hover:border-purple-500/30"
-                     }`}
-                    >
+                    <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-black/50 backdrop-blur-md border border-white/10 group-hover:border-purple-500/30 text-[10px] md:text-xs font-mono text-zinc-300 transition-colors">
                       <Calendar size={10} className="text-purple-400" />
                       {new Date(item.date).toLocaleDateString(undefined, {
                         year: "numeric",
@@ -154,41 +126,27 @@ export default function Achievements({
                       })}
                     </div>
                     <Award
-                      className={`transition-colors duration-500 ${
-                        isActive
-                          ? "text-purple-400"
-                          : "text-zinc-600 group-hover:text-purple-400"
-                      }`}
+                      className="text-zinc-600 group-hover:text-purple-400 transition-colors duration-500"
                       size={20}
                     />
                   </div>
 
-                  {/* Footer Content */}
+                  {/* Bottom Row: Title & Details */}
                   <div>
-                    <h3
-                      className={`text-lg md:text-xl font-bold mb-2 leading-tight transition-colors line-clamp-2 ${
-                        isActive
-                          ? "text-purple-100"
-                          : "text-white group-hover:text-purple-100"
-                      }`}
-                    >
+                    <h3 className="text-lg md:text-xl font-bold mb-2 leading-tight text-white group-hover:text-purple-100 transition-colors line-clamp-2">
                       {item.title}
                     </h3>
 
-                    {/* Details Animation */}
+                    {/* Details: Always Open on Mobile, Slide-up on Desktop Hover */}
                     <div
-                      className={`grid transition-[grid-template-rows] duration-500 ease-in-out ${
-                        isActive
-                          ? "grid-rows-[1fr]"
-                          : "grid-rows-[0fr] group-hover:grid-rows-[1fr]"
-                      }`}
+                      className="grid transition-[grid-template-rows] duration-500 ease-in-out 
+                        grid-rows-[1fr] 
+                        md:grid-rows-[0fr] md:group-hover:grid-rows-[1fr]"
                     >
                       <div
-                        className={`overflow-hidden transition-opacity duration-700 delay-100 ${
-                          isActive
-                            ? "opacity-100"
-                            : "opacity-0 group-hover:opacity-100"
-                        }`}
+                        className="overflow-hidden transition-opacity duration-700 delay-100 
+                          opacity-100 
+                          md:opacity-0 md:group-hover:opacity-100"
                       >
                         <div className="pt-3 md:pt-4 mt-2 md:mt-4 border-t border-white/10 flex items-center justify-between pointer-events-auto">
                           <div className="text-[10px] md:text-xs font-mono text-zinc-400 uppercase tracking-wider">
@@ -202,7 +160,6 @@ export default function Achievements({
                             <a
                               href={item.proofLink}
                               target="_blank"
-                              onClick={(e) => e.stopPropagation()}
                               className="flex items-center gap-1 text-[10px] md:text-xs font-bold text-purple-400 hover:text-purple-300 transition-colors"
                             >
                               VERIFY <ExternalLink size={12} />

@@ -23,24 +23,21 @@ export default function Hero({ heroImage }: { heroImage: string }) {
   const titleRef = useRef<HTMLHeadingElement>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
-  //  AUDIO STATE (Default: Open/Unmuted)
+  // AUDIO STATE
   const [isMuted, setIsMuted] = useState(false);
 
-  //  Initialize & Attempt Autoplay
+  // Initialize & Attempt Autoplay
   useEffect(() => {
-    // Create audio object
     audioRef.current = new Audio("/audio/startup.mp3");
     audioRef.current.loop = true;
     audioRef.current.volume = 0.4;
 
-    // Attempt to play immediately
     const playPromise = audioRef.current.play();
 
     if (playPromise !== undefined) {
       playPromise.catch((error) => {
-        // Auto-play was prevented by browser policy (user hasn't interacted yet)
         console.log("Autoplay prevented:", error);
-        setIsMuted(true); // Revert UI to muted state
+        setIsMuted(true);
       });
     }
 
@@ -52,7 +49,7 @@ export default function Hero({ heroImage }: { heroImage: string }) {
     };
   }, []);
 
-  //  Handle User Toggle
+  // Handle User Toggle
   const toggleAudio = () => {
     if (!audioRef.current) return;
 
@@ -156,10 +153,9 @@ export default function Hero({ heroImage }: { heroImage: string }) {
       ref={container}
       className="h-screen w-full relative flex flex-col justify-center items-center overflow-hidden bg-[#09090b]"
     >
-      {/*  AUDIO TOGGLE (BOTTOM RIGHT)  */}
+      {/* AUDIO TOGGLE */}
       <button
         onClick={toggleAudio}
-        //  Position updated to Bottom-Right
         className="absolute bottom-6 md:bottom-10 right-6 md:right-12 z-50 flex items-center gap-2 px-3 py-1.5 rounded-full bg-black/40 backdrop-blur-md border border-white/10 hover:bg-white/10 hover:border-emerald-500/50 transition-all duration-300 group shadow-lg"
       >
         {isMuted ? (
@@ -178,7 +174,6 @@ export default function Hero({ heroImage }: { heroImage: string }) {
             <span className="text-[9px] font-mono text-emerald-500 uppercase tracking-widest">
               System_Audio
             </span>
-            {/* Visualizer bars */}
             <div className="flex items-end gap-0.5 h-3">
               <div className="w-0.5 bg-emerald-500 animate-bounce h-2" />
               <div className="w-0.5 bg-emerald-500 animate-[bounce_1.2s_infinite] h-3" />
@@ -280,7 +275,7 @@ export default function Hero({ heroImage }: { heroImage: string }) {
           <div className="absolute inset-0 bg-indigo-500/20 rounded-full blur-2xl group-hover:bg-indigo-500/30 transition-all duration-500" />
           <div className="absolute -inset-3 rounded-full border border-white/5" />
           <div className="absolute -inset-6 rounded-full border border-white/5 opacity-40" />
-          <div className="absolute inset-0 rounded-full border-2 border-transparent border-t-indigo-500/50 border-r-indigo-500/50 rotate-45 group-hover:rotate-225 transition-transform duration-1000 ease-in-out" />
+          <div className="absolute inset-0 rounded-full border-2 border-transparent border-t-indigo-500/50 border-r-indigo-500/50 rotate-45 group-hover:rotate-25 transition-transform duration-1000 ease-in-out" />
           <div className="relative w-full h-full rounded-full overflow-hidden border-4 border-[#09090b] shadow-2xl">
             {heroImage ? (
               <Image
@@ -295,7 +290,7 @@ export default function Hero({ heroImage }: { heroImage: string }) {
                 NO_DATA
               </div>
             )}
-            {/*  HOLOGRAPHIC SCAN LINE  */}
+            {/* HOLOGRAPHIC SCAN LINE */}
             <div className="absolute top-0 left-0 w-full h-full bg-linear-to-b from-transparent via-emerald-500/10 to-transparent animate-scan pointer-events-none" />
             <div className="absolute top-0 left-0 w-full h-0.5 bg-emerald-400/50 shadow-[0_0_15px_rgba(52,211,153,0.8)] animate-scan-line pointer-events-none" />
           </div>
@@ -313,27 +308,38 @@ export default function Hero({ heroImage }: { heroImage: string }) {
           <span className="text-zinc-300">init_portfolio.sh</span>
         </div>
 
-        {/* Spotlight Title */}
+        {/* --- DUAL MODE TITLE --- */}
         <div className="relative group cursor-default">
-          <h1 className="hero-text text-4xl sm:text-6xl md:text-8xl font-black text-zinc-800 tracking-tighter">
-            Adnan Qureshi
-          </h1>
-          <h1
-            ref={titleRef}
-            onMouseMove={handleTextMouseMove}
-            className="hero-text text-4xl sm:text-6xl md:text-8xl font-black tracking-tighter absolute top-0 left-0 w-full text-white pointer-events-auto"
-            style={{
-              maskImage:
-                "radial-gradient(circle 100px at var(--x, 50%) var(--y, 50%), black 20%, transparent 100%)",
-              WebkitMaskImage:
-                "radial-gradient(circle 100px at var(--x, 50%) var(--y, 50%), black 20%, transparent 100%)",
-            }}
-          >
+          {/* 1. MOBILE ONLY: Static, Bright Text (No Mask) */}
+          <h1 className="hero-text text-4xl sm:text-6xl font-black text-white tracking-tighter md:hidden">
             Adnan{" "}
             <span className="text-transparent bg-clip-text bg-linear-to-r from-zinc-200 to-zinc-400">
               Qureshi
             </span>
           </h1>
+
+          {/* 2. LAPTOP/DESKTOP ONLY: Torch/Spotlight Effect */}
+          <div className="hidden md:block">
+            <h1 className="hero-text text-6xl md:text-8xl font-black text-zinc-800 tracking-tighter">
+              Adnan Qureshi
+            </h1>
+            <h1
+              ref={titleRef}
+              onMouseMove={handleTextMouseMove}
+              className="hero-text text-6xl md:text-8xl font-black tracking-tighter absolute top-0 left-0 w-full text-white pointer-events-auto"
+              style={{
+                maskImage:
+                  "radial-gradient(circle 100px at var(--x, 50%) var(--y, 50%), black 20%, transparent 100%)",
+                WebkitMaskImage:
+                  "radial-gradient(circle 100px at var(--x, 50%) var(--y, 50%), black 20%, transparent 100%)",
+              }}
+            >
+              Adnan{" "}
+              <span className="text-transparent bg-clip-text bg-linear-to-r from-zinc-200 to-zinc-400">
+                Qureshi
+              </span>
+            </h1>
+          </div>
         </div>
 
         <div className="hero-text h-6 md:h-8 flex justify-center items-center">
@@ -355,31 +361,31 @@ export default function Hero({ heroImage }: { heroImage: string }) {
         </span>
         <Command size={14} className="text-zinc-500 md:w-4 md:h-4" />
       </div>
+
+      <style jsx global>{`
+        @keyframes scanLine {
+          0% {
+            top: -10%;
+            opacity: 0;
+          }
+          10% {
+            opacity: 1;
+          }
+          90% {
+            opacity: 1;
+          }
+          100% {
+            top: 110%;
+            opacity: 0;
+          }
+        }
+        .animate-scan-line {
+          animation: scanLine 4s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+        }
+        .animate-scan {
+          animation: scanLine 4s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+        }
+      `}</style>
     </section>
   );
 }
-
-<style jsx global>{`
-  @keyframes scanLine {
-    0% {
-      top: -10%;
-      opacity: 0;
-    }
-    10% {
-      opacity: 1;
-    }
-    90% {
-      opacity: 1;
-    }
-    100% {
-      top: 110%;
-      opacity: 0;
-    }
-  }
-  .animate-scan-line {
-    animation: scanLine 4s cubic-bezier(0.4, 0, 0.2, 1) infinite;
-  }
-  .animate-scan {
-    animation: scanLine 4s cubic-bezier(0.4, 0, 0.2, 1) infinite;
-  }
-`}</style>;
