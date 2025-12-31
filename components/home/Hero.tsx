@@ -49,6 +49,22 @@ export default function Hero({ heroImage }: { heroImage: string }) {
     };
   }, []);
 
+  useEffect(() => {
+    const enableAudio = () => {
+      if (!audioRef.current) return;
+
+      audioRef.current
+        .play()
+        .then(() => setIsMuted(false))
+        .catch(() => {});
+
+      window.removeEventListener("click", enableAudio);
+    };
+
+    window.addEventListener("click", enableAudio);
+    return () => window.removeEventListener("click", enableAudio);
+  }, []);
+
   // Handle User Toggle
   const toggleAudio = () => {
     if (!audioRef.current) return;
