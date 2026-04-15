@@ -82,6 +82,8 @@ const getPlatformStyle = (platform: string) => {
 };
 
 export default function Contact({ contacts = [] }: { contacts: any[] }) {
+    const currentYear = new Date().getFullYear();
+
   const container = useRef(null);
   const [copied, setCopied] = useState(false);
 
@@ -346,7 +348,7 @@ export default function Contact({ contacts = [] }: { contacts: any[] }) {
             <span>SYSTEM SHUTDOWN PENDING...</span>
           </div>
           <p className="hover:text-zinc-400 transition-colors">
-            © 2025 ADNAN QURESHI // DESIGNED IN INDORE, INDIA
+            © {currentYear} ADNAN QURESHI // DESIGNED IN INDORE, INDIA
           </p>
         </div>
       </div>
