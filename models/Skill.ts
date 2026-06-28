@@ -8,12 +8,20 @@ const SkillSchema = new Schema(
     category: {
       type: String,
       required: true,
-      enum: ["Frontend", "Backend", "Database", "Language", "Tool", "Other"],
+      enum: [
+        "Frontend",
+        "Backend",
+        "Database",
+        "DevOps",
+        "Language",
+        "Tool",
+        "Other",
+      ],
     },
     badge: { type: String, required: true },
     experience: { type: String, required: true },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 const Skill = models.Skill || model("Skill", SkillSchema);

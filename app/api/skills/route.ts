@@ -22,21 +22,30 @@ export async function GET() {
 export async function POST(req: Request) {
   try {
     const auth = await verifyAuth();
-    if (!auth)
-      return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+
+    if (!auth) {
+      return NextResponse.json(
+        { message: "Unauthorized" },
+        { status: 401 }
+      );
+    }
 
     const body = await req.json();
+
     await connectToDatabase();
 
     const newSkill = await Skill.create(body);
-    return NextResponse.json(newSkill, { status: 201 });
-  } catch (error) {
-  const message =
-    error instanceof Error ? error.message : "Unknown error";
 
-  return NextResponse.json(
-    { message: "Error Creating Skill", error: message },
-    { status: 500 }
-  );
+    return NextResponse.json(newSkill, { status: 201 });
+
+  } catch (error) {
+
+    return NextResponse.json(
+      {
+        error: String(error),
+      },
+      { status: 500 }
+    );
+  }
 }
-}
+
